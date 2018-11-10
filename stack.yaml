@@ -1,0 +1,11 @@
+resolver: lts-12.14
+
+packages:
+- .
+
+# TODO: Get nix working
+nix:
+  packages:
+  - haskellPackages.sdl2
+  - haskellPackages.sdl2-image
+  - stockfish
