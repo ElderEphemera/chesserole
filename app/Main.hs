@@ -4,7 +4,7 @@
 
 module Main where
 
-import Control.Monad        (when)
+import Control.Monad        (when, unless)
 import Control.Monad.Reader (MonadIO(..), MonadReader(..), ReaderT(..))
 import Data.Foldable        (for_)
 import Data.IORef           (IORef, newIORef, readIORef, writeIORef)
@@ -95,10 +95,12 @@ handleAction (Click sq) = True <$ do
   selSquare <- getSelSquare
   case selSquare of
     Nothing -> do
-      putSelSquare $ Just sq
-      renderBoard
+      board <- getBoard
+      for_ (getPiece sq board) $ \_ -> do
+        putSelSquare $ Just sq
+        renderBoard
     Just sel -> do
-      modifyBoard (forceMovePiece sel sq)
+      unless (sq == sel) $ modifyBoard (forceMovePiece sel sq)
       putSelSquare Nothing
       renderBoard
 
