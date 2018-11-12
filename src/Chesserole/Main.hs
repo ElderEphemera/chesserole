@@ -109,7 +109,6 @@ eventAction QuitEvent = Just Quit
 eventAction (MouseButtonEvent MouseButtonEventData
              { mouseButtonEventMotion = Released
              , mouseButtonEventButton = ButtonLeft
-             , mouseButtonEventClicks = 1
              , mouseButtonEventPos    = pos 
              }) = Just . Click . Square' $ fmap ((`div` 100) . fromEnum) pos
 eventAction _ = Nothing
