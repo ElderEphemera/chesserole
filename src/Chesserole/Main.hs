@@ -34,7 +34,7 @@ initializeApp = do
     defaultWindow { windowInitialSize = V2 800 800 }
   renderer <- createRenderer window (-1) defaultRenderer
   texture <- loadTexture renderer "./assets/chess.png"
-  boardRef <- newIORef initialBoard
+  gameRef <- newIORef initialGame
   selSquareRef <- newIORef Nothing
   return AppCtx{..}
 
@@ -48,7 +48,7 @@ app = do
 data AppCtx = AppCtx
   { renderer :: Renderer
   , texture :: Texture
-  , boardRef :: IORef Board -- TODO: Board --> Game
+  , gameRef :: IORef Game
   , selSquareRef :: IORef (Maybe Square)
   }
 
@@ -62,14 +62,15 @@ askRenderer = renderer <$> ask
 askTexture :: App Texture
 askTexture = texture <$> ask
 
-getBoard :: App Board
-getBoard = coerce (readIORef . boardRef)
 
-putBoard :: Board -> App ()
-putBoard board = coerce ((`writeIORef` board) . boardRef)
+getGame :: App Game
+getGame = coerce (readIORef . gameRef)
 
-modifyBoard :: (Board -> Board) -> App ()
-modifyBoard f = getBoard >>= putBoard . f
+putGame :: Game -> App ()
+putGame game = coerce ((`writeIORef` game) . gameRef)
+
+modifyGame :: (Game -> Game) -> App ()
+modifyGame f = getGame >>= putGame . f
 
 getSelSquare :: App (Maybe Square)
 getSelSquare = coerce (readIORef . selSquareRef)
@@ -94,12 +95,13 @@ handleAction (Click sq) = True <$ do
   selSquare <- getSelSquare
   case selSquare of
     Nothing -> do
-      board <- getBoard
-      for_ (getPiece sq board) $ \_ -> do
+      Game{..} <- getGame
+      for_ (getAtSquare sq gameBoard) $ \_piece -> do
         putSelSquare $ Just sq
         renderBoard
     Just sel -> do
-      unless (sq == sel) $ modifyBoard (forceMovePiece sel sq)
+      unless (sq == sel) . modifyGame $ \g@Game{..} ->
+        g { gameBoard = forceMovePiece sel sq gameBoard }
       putSelSquare Nothing
       renderBoard
 
