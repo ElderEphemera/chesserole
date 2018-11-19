@@ -3,8 +3,7 @@
 {-# LANGUAGE PatternSynonyms #-}
 {-# LANGUAGE RecordWildCards #-}
 
--- PatternSynonyms <> Recordwildcards = bug
--- TODO: Reference the Trac ticket here
+-- See <https://ghc.haskell.org/trac/ghc/ticket/14630>
 {-# OPTIONS_GHC -fno-warn-name-shadowing #-}
 
 module Chesserole.Chess where
