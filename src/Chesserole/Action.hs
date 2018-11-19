@@ -39,5 +39,5 @@ eventAction (MouseButtonEvent MouseButtonEventData
              { mouseButtonEventMotion = Released
              , mouseButtonEventButton = ButtonLeft
              , mouseButtonEventPos    = pos 
-             }) = Just . Click . Square' $ fmap ((`div` 100) . fromEnum) pos
+             }) = Just . Click . pointSquare $ fmap ((`div` 100) . fromEnum) pos
 eventAction _ = Nothing

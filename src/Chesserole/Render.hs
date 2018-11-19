@@ -56,7 +56,7 @@ mkTile :: CInt -> CInt -> Tile
 mkTile x y = mkTile' . P $ V2 x y
 
 squareToTile :: Square -> Tile
-squareToTile (Square' pt) = mkTile' $ fmap fromIntegral pt
+squareToTile (Square file rank) = mkTile (toEnum file) (toEnum rank)
 
 squareTiles :: [Tile]
 squareTiles = [ mkTile x y | y <- [0..7], x <- [0..7] ]

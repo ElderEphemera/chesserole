@@ -1,12 +1,11 @@
 {-# LANGUAGE DerivingVia #-}
-{-# LANGUAGE PatternSynonyms #-}
 
 module Chesserole.Chess.Game where
 
 import Control.Applicative  (ZipList(..))
 import Data.Functor.Compose (Compose(..))
 import Linear               (V2(..))
-import Linear.Affine        ((.+^), Point(..))
+import Linear.Affine        (Point(..))
 
 --------------------------------------------------------------------------------
 
@@ -33,32 +32,20 @@ type Board = Board' (Maybe Piece)
 
 --------------------------------------------------------------------------------
 
--- TODO: @Point V2 IntMod8@?
-newtype Square = Square' { squarePos :: Point V2 Int }
+data Square = Square { squareFile, squareRank :: Int }
   deriving (Eq, Ord, Show)
-
-{-# COMPLETE Square #-}
-pattern Square :: Int -> Int -> Square
-pattern Square{squareFile, squareRank} <- Square' (P (V2 squareFile squareRank))
 
 square :: Int -> Int -> Maybe Square
 square file rank
-  | inBounds file && inBounds rank = Just (Square' (P (V2 file rank)))
+  | inBounds file && inBounds rank = Just (Square file rank)
   | otherwise = Nothing
+  where inBounds n = 0 <= n && n < 8
 
-squareP :: Point V2 Int -> Maybe Square
-squareP pt@(P (V2 file rank))
-  | inBounds file && inBounds rank = Just (Square' pt)
-  | otherwise = Nothing
-
-squareModP :: Point V2 Int -> Square
-squareModP = Square' . fmap (`rem` 8)
-
-inBounds :: Int -> Bool
-inBounds n = 0 <= n && n < 8
+pointSquare :: Point V2 Int -> Square
+pointSquare (P (V2 file rank)) = Square file rank
 
 shiftSquare :: Square -> V2 Int -> Maybe Square
-shiftSquare (Square' pt) v = squareP $ pt .+^ v
+shiftSquare (Square file rank) (V2 x y) = square (file + x) (rank + y)
 
 --------------------------------------------------------------------------------
 
