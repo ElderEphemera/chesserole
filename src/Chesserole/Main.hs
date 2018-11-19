@@ -19,8 +19,6 @@ import SDL.Image
 
 import Chesserole.Chess
 
---import Debug.Trace
-
 -- TODO: Organize
 
 --------------------------------------------------------------------------------
