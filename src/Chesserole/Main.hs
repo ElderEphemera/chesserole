@@ -33,8 +33,9 @@ initializeApp = do
   window <- createWindow "Chesserole" $
     defaultWindow { windowInitialSize = V2 800 800 }
   renderer <- createRenderer window (-1) defaultRenderer
-  texture <- loadTexture renderer "./assets/chess.png"
   rendererDrawBlendMode renderer $= BlendAlphaBlend
+  woodgrainTexture <- loadTexture renderer "./assets/woodgrain.png"
+  piecesTexture <- loadTexture renderer "./assets/chess.png"
   gameRef <- newIORef initialGame
   selSquareRef <- newIORef Nothing
   return AppCtx{..}
@@ -48,7 +49,8 @@ app = do
 
 data AppCtx = AppCtx
   { renderer :: Renderer
-  , texture :: Texture
+  , woodgrainTexture :: Texture
+  , piecesTexture :: Texture
   , gameRef :: IORef Game
   , selSquareRef :: IORef (Maybe Square)
   }
@@ -60,9 +62,11 @@ newtype App a = App { runApp :: ReaderT AppCtx IO a }
 askRenderer :: App Renderer
 askRenderer = renderer <$> ask
 
-askTexture :: App Texture
-askTexture = texture <$> ask
+askPiecesTexture :: App Texture
+askPiecesTexture = piecesTexture <$> ask
 
+askWoodgrainTexture :: App Texture
+askWoodgrainTexture = woodgrainTexture <$> ask
 
 getGame :: App Game
 getGame = coerce (readIORef . gameRef)
@@ -105,6 +109,7 @@ handleAction (Click sq) = True <$ do
         g { gameBoard = forceMovePiece sel sq gameBoard }
       putSelSquare Nothing
       renderBoard
+      --getGame >>= liftIO . putStrLn . fen
 
 eventAction :: EventPayload -> Maybe Action
 eventAction QuitEvent = Just Quit
@@ -119,16 +124,14 @@ eventAction _ = Nothing
 
 renderBoard :: App ()
 renderBoard = do
-  let black  = V4 209 139  71 255
-      white  = V4 255 206 168 255
-      green  = V4  36 186  31 100
   AppCtx{..} <- ask
   game@Game{gameBoard=Board{..}} <- getGame
+  let white  = V4 209 139  71 150
       yellow = V4 206 211  46 255
+      green  = V4  36 186  31 100
 
-  rendererDrawColor renderer $= black
-  clear renderer
-  
+  copy renderer woodgrainTexture Nothing Nothing
+
   rendererDrawColor renderer $= white
   fillRects renderer $ fromList
     [ mkSpace x y | y <- [0..7], x <- [0..7], (x + y) `rem` 2 == 0 ]
