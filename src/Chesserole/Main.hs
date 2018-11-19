@@ -4,6 +4,7 @@
 
 module Chesserole.Main where
 
+import Control.Concurrent   (threadDelay)
 import Control.Monad        (when, unless)
 import Control.Monad.Reader (MonadIO(..), MonadReader(..), ReaderT(..))
 import Data.Foldable        (for_)
@@ -78,12 +79,10 @@ putSelSquare maysquare = coerce ((`writeIORef` maysquare) . selSquareRef)
 
 --------------------------------------------------------------------------------
 
--- TODO: Wait between loops
 mainLoop :: App ()
 mainLoop = do
-  events <- pollEvents
---  if null events then pure () else print $ map eventPayload events
-  let actions = mapMaybe (eventAction . eventPayload) events
+  actions <- mapMaybe (eventAction . eventPayload) <$> pollEvents
+  when (null actions) . liftIO $ threadDelay 1000
   continue <- and <$> for actions handleAction
   when continue mainLoop
 
