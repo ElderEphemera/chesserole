@@ -20,7 +20,7 @@ renderBoard :: App ()
 renderBoard = do
   AppCtx{..} <- ask
   game@Game{gameBoard=Board{..}} <- getGame
-  let white  = V4 209 139  71 150
+  let white  = V4 209 139  71 187
       yellow = V4 206 211  46 255
       green  = V4  36 186  31 100
 
