@@ -118,9 +118,10 @@ eventAction _ = Nothing
 
 renderBoard :: App ()
 renderBoard = do
-  renderer <- askRenderer
   let black  = V4 209 139  71 255
       white  = V4 255 206 168 255
+  AppCtx{..} <- ask
+  game@Game{gameBoard=Board{..}} <- getGame
       yellow = V4 206 211  46 255
 
   rendererDrawColor renderer $= black
@@ -134,18 +135,13 @@ renderBoard = do
   for_ selSquare $ \sel -> do
     rendererDrawColor renderer $= yellow
     fillRect renderer . Just $ squareSpace sel
-  
-  renderPieces
 
-  present renderer
 
-renderPieces :: App ()
-renderPieces = do
-  AppCtx{..} <- ask
-  Board{..} <- getBoard
   for_ (zip (concat boardPieces) spaces) $ \(maypiece, space) ->
     for_ maypiece $ \piece ->
-      copy renderer texture (Just $ pieceTile piece) (Just space)
+      copy renderer piecesTexture (Just $ pieceTile piece) (Just space)
+
+  present renderer
 
 --------------------------------------------------------------------------------
 
