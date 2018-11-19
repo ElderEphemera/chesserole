@@ -34,6 +34,7 @@ initializeApp = do
     defaultWindow { windowInitialSize = V2 800 800 }
   renderer <- createRenderer window (-1) defaultRenderer
   texture <- loadTexture renderer "./assets/chess.png"
+  rendererDrawBlendMode renderer $= BlendAlphaBlend
   gameRef <- newIORef initialGame
   selSquareRef <- newIORef Nothing
   return AppCtx{..}
@@ -120,6 +121,7 @@ renderBoard :: App ()
 renderBoard = do
   let black  = V4 209 139  71 255
       white  = V4 255 206 168 255
+      green  = V4  36 186  31 100
   AppCtx{..} <- ask
   game@Game{gameBoard=Board{..}} <- getGame
       yellow = V4 206 211  46 255
@@ -133,9 +135,12 @@ renderBoard = do
 
   selSquare <- getSelSquare
   for_ selSquare $ \sel -> do
+
     rendererDrawColor renderer $= yellow
     fillRect renderer . Just $ squareSpace sel
 
+    rendererDrawColor renderer $= green
+    for_ (validMovesFrom game sel) $ fillRect renderer . Just . squareSpace
 
   for_ (zip (concat boardPieces) spaces) $ \(maypiece, space) ->
     for_ maypiece $ \piece ->
