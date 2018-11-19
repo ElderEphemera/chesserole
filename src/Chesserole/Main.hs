@@ -24,7 +24,10 @@ import Chesserole.Chess
 --------------------------------------------------------------------------------
 
 main :: IO ()
-main = do
+main = initializeApp >>= runReaderT (runApp app)
+
+initializeApp :: IO AppCtx
+initializeApp = do
   initializeAll
   window <- createWindow "Chesserole" $
     defaultWindow { windowInitialSize = V2 800 800 }
@@ -32,11 +35,10 @@ main = do
   texture <- loadTexture renderer "./assets/chess.png"
   boardRef <- newIORef initialBoard
   selSquareRef <- newIORef Nothing
-  runReaderT (runApp app) AppCtx{..}
+  return AppCtx{..}
 
 app :: App ()
 app = do
-  AppCtx{..} <- ask
   renderBoard
   mainLoop
 
