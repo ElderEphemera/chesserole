@@ -14,7 +14,7 @@ import Chesserole.Chess.Game
 
 data AppCtx = AppCtx
   { renderer :: Renderer
-  , woodgrainTexture :: Texture
+  , boardTexture :: Texture
   , piecesTexture :: Texture
   , gameRef :: IORef Game
   , selSquareRef :: IORef (Maybe Square)
@@ -30,8 +30,8 @@ askRenderer = renderer <$> ask
 askPiecesTexture :: App Texture
 askPiecesTexture = piecesTexture <$> ask
 
-askWoodgrainTexture :: App Texture
-askWoodgrainTexture = woodgrainTexture <$> ask
+askBoardTexture :: App Texture
+askBoardTexture = boardTexture <$> ask
 
 getGame :: App Game
 getGame = coerce (readIORef . gameRef)

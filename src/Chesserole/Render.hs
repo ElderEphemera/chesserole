@@ -5,7 +5,6 @@ module Chesserole.Render where
 import Control.Monad.Reader (MonadReader(..))
 import Data.Foldable        (for_)
 import Foreign.C.Types      (CInt)
-import GHC.Exts             (fromList)
 import Linear               (V4(..))
 
 import SDL
@@ -20,15 +19,10 @@ renderBoard :: App ()
 renderBoard = do
   AppCtx{..} <- ask
   game@Game{gameBoard=Board{..}} <- getGame
-  let white  = V4 209 139  71 187
-      yellow = V4 206 211  46 255
+  let yellow = V4 206 211  46 255
       green  = V4  36 186  31 100
 
-  copy renderer woodgrainTexture Nothing Nothing
-
-  rendererDrawColor renderer $= white
-  fillRects renderer $ fromList
-    [ mkTile x y | y <- [0..7], x <- [0..7], (x + y) `rem` 2 == 0 ]
+  copy renderer boardTexture Nothing Nothing
 
   selSquare <- getSelSquare
   for_ selSquare $ \sel -> do

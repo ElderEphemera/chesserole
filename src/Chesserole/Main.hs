@@ -31,7 +31,7 @@ initializeApp = do
     defaultWindow { windowInitialSize = V2 800 800 }
   renderer <- createRenderer window (-1) defaultRenderer
   rendererDrawBlendMode renderer $= BlendAlphaBlend
-  woodgrainTexture <- loadTexture renderer "./assets/woodgrain.png"
+  boardTexture <- loadTexture renderer "./assets/board.png"
   piecesTexture <- loadTexture renderer "./assets/chess.png"
   gameRef <- newIORef initialGame
   selSquareRef <- newIORef Nothing
