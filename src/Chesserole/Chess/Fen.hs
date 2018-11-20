@@ -1,8 +1,5 @@
 {-# LANGUAGE RecordWildCards #-}
 
--- See <https://ghc.haskell.org/trac/ghc/ticket/14630>
-{-# OPTIONS_GHC -fno-warn-name-shadowing #-}
-
 module Chesserole.Chess.Fen where
 
 import Data.Char (toLower)
