@@ -56,17 +56,6 @@ squareTiles :: [Tile]
 squareTiles = [ mkTile x y | y <- [0..7], x <- [0..7] ]
 
 pieceTile :: Piece -> Tile
-pieceTile Piece{..} =
-  mkTile (pieceTileCol pieceType) (pieceTileRow pieceColor)
-
-pieceTileRow :: Color -> CInt
-pieceTileRow White = 1
-pieceTileRow Black = 0
-
-pieceTileCol :: PieceType -> CInt
-pieceTileCol Pawn   = 0
-pieceTileCol Knight = 1
-pieceTileCol Bishop = 2
-pieceTileCol Rook   = 3
-pieceTileCol Queen  = 4
-pieceTileCol King   = 5
+pieceTile Piece{..} = mkTile
+  (toEnum . fromEnum $ pieceType)
+  (toEnum . fromEnum $ pieceColor)

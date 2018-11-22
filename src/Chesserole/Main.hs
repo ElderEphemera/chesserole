@@ -31,7 +31,7 @@ initializeApp = do
   renderer <- createRenderer window (-1) defaultRenderer
   rendererDrawBlendMode renderer $= BlendAlphaBlend
   boardTexture <- loadTexture renderer "./assets/board.png"
-  piecesTexture <- loadTexture renderer "./assets/chess.png"
+  piecesTexture <- loadTexture renderer "./assets/pieces.png"
   gameRef <- newIORef initialGame
   selSquareRef <- newIORef Nothing
   return AppCtx{..}
