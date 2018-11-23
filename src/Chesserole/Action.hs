@@ -2,13 +2,16 @@
 
 module Chesserole.Action where
 
-import Control.Monad (unless)
-import Data.Foldable (for_)
+import Control.Monad          (unless)
+import Control.Monad.IO.Class (liftIO)
+import Data.Foldable          (for_)
+import System.IO              (hFlush, hPutStrLn)
 
 import SDL
 
 import Chesserole.App
 import Chesserole.Chess.Game
+import Chesserole.Chess.Fen
 import Chesserole.Render
 
 --------------------------------------------------------------------------------
@@ -27,11 +30,12 @@ handleAction (Click sq) = True <$ do
         putSelSquare $ Just sq
         renderBoard
     Just sel -> do
-      unless (sq == sel) . modifyGame $ \g@Game{..} ->
-        g { gameBoard = forceMovePiece sel sq gameBoard }
+      unless (sq == sel) . modifyGame $ movePiece sel sq
       putSelSquare Nothing
       renderBoard
-      --getGame >>= liftIO . putStrLn . fen
+      getGame >>= liftIO . putStrLn . fen
+      getGame >>= engineCommand . ("position fen " <>) . fen
+      engineCommand "go"
 
 eventAction :: EventPayload -> Maybe Action
 eventAction QuitEvent = Just Quit
@@ -41,3 +45,8 @@ eventAction (MouseButtonEvent MouseButtonEventData
              , mouseButtonEventPos    = pos 
              }) = Just . Click . pointSquare $ fmap ((`div` 100) . fromEnum) pos
 eventAction _ = Nothing
+
+engineCommand :: String -> App ()
+engineCommand cmd = do
+  h <- askEngineStdin
+  liftIO $ hPutStrLn h cmd *> hFlush h

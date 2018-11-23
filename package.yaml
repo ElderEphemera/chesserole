@@ -27,6 +27,7 @@ dependencies:
 - sdl2 # TODO: Bounds
 - sdl2-image # TODO: Bounds
 - linear # TODO: Bounds
+- typed-process # TODO: Bounds
 
 library:
   source-dirs: src

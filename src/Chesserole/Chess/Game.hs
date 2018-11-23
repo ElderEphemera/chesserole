@@ -1,4 +1,5 @@
 {-# LANGUAGE DerivingVia #-}
+{-# LANGUAGE RecordWildCards #-}
 
 module Chesserole.Chess.Game where
 
@@ -86,7 +87,7 @@ initialGame = Game
   , gameCastling = CastleType <$> [White, Black] <*> [QueenSide, KingSide]
   , gameEnPassant = Nothing
   , gameClock = 0
-  , gameMoves = 0
+  , gameMoves = 1
   }
 
 --------------------------------------------------------------------------------
@@ -102,6 +103,17 @@ forceMovePiece :: Square -> Square -> Board -> Board
 forceMovePiece from to board =
   let maypiece = getAtSquare from board
   in setAtSquare to maypiece $ setAtSquare from Nothing board
+
+-- TODO: Special actions: en passant, castling, promotion?
+movePiece :: Square -> Square -> Game -> Game
+movePiece from to Game{..} = Game
+  { gameBoard = forceMovePiece from to gameBoard
+  , gamePlayer = invColor gamePlayer
+  , gameCastling = gameCastling -- TODO
+  , gameEnPassant = gameEnPassant -- TODO
+  , gameClock = gameClock -- TODO
+  , gameMoves = gameMoves + fromEnum gamePlayer
+  }
 
 --------------------------------------------------------------------------------
 

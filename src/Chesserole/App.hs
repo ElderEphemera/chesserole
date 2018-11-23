@@ -5,6 +5,8 @@ module Chesserole.App where
 import Control.Monad.Reader (MonadIO(..), MonadReader(..), ReaderT(..))
 import Data.IORef           (IORef, readIORef, writeIORef)
 import GHC.Exts             (coerce)
+import GHC.IO.Handle        (Handle)
+import System.Process.Typed (Process, getStdin, getStdout)
 
 import SDL
 
@@ -18,6 +20,7 @@ data AppCtx = AppCtx
   , piecesTexture :: Texture
   , gameRef :: IORef Game
   , selSquareRef :: IORef (Maybe Square)
+  , engineProcess :: Process Handle () ()
   }
 
 -- TODO: Capabilities?
@@ -32,6 +35,15 @@ askPiecesTexture = piecesTexture <$> ask
 
 askBoardTexture :: App Texture
 askBoardTexture = boardTexture <$> ask
+
+askEngineProcess :: App (Process Handle () ())
+askEngineProcess = engineProcess <$> ask
+
+askEngineStdin :: App Handle
+askEngineStdin = getStdin <$> askEngineProcess
+
+askEngineStdOut :: App ()
+askEngineStdOut = getStdout <$> askEngineProcess
 
 getGame :: App Game
 getGame = coerce (readIORef . gameRef)

@@ -9,6 +9,8 @@ import Control.Monad.Reader (MonadIO(..), ReaderT(..))
 import Data.IORef           (newIORef)
 import Data.Traversable     (for)
 import Data.Maybe           (mapMaybe)
+import System.Process.Typed
+       (createPipe, setStdin, {-setStdout,-} shell, withProcess)
 
 import SDL
 import SDL.Image
@@ -21,10 +23,7 @@ import Chesserole.Render
 --------------------------------------------------------------------------------
 
 main :: IO ()
-main = initializeApp >>= runReaderT (runApp app)
-
-initializeApp :: IO AppCtx
-initializeApp = do
+main = do
   initializeAll
   window <- createWindow "Chesserole" $
     defaultWindow { windowInitialSize = V2 800 800 }
@@ -34,12 +33,15 @@ initializeApp = do
   piecesTexture <- loadTexture renderer "./assets/pieces.png"
   gameRef <- newIORef initialGame
   selSquareRef <- newIORef Nothing
-  return AppCtx{..}
+  let stockfish = setStdin createPipe {-. setStdout createPipe-} $ shell "stockfish"
+  withProcess stockfish $ \engineProcess -> runReaderT (runApp app) AppCtx{..}
 
 app :: App ()
 app = do
+  engineCommand "uci"
   renderBoard
   mainLoop
+  engineCommand "quit"
 
 mainLoop :: App ()
 mainLoop = do
