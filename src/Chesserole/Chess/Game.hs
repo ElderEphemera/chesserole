@@ -125,10 +125,3 @@ modifyInList _ _ [] = error "modifyinlist: invalid index"
 
 setInList :: Int -> a -> [a] -> [a]
 setInList n = modifyInList n . const
-
---------------------------------------------------------------------------------
-
-data Move
-  = Move Square Square
-  | Castle CastleSide
-  deriving (Eq, Ord, Show)

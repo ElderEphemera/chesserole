@@ -12,6 +12,13 @@ import Chesserole.Chess.Game
 
 --------------------------------------------------------------------------------
 
+data Move
+  = Move Square Square
+  | Castle CastleSide
+  deriving (Eq, Ord, Show)
+
+--------------------------------------------------------------------------------
+
 validMovesFrom :: Game -> Square -> [Square]
 validMovesFrom game@Game{..} from
   =  standardMovement gameBoard from

@@ -6,6 +6,7 @@ import Data.Char (toLower)
 import Data.List (intercalate)
 
 import Chesserole.Chess.Game
+import Chesserole.Chess.Moves
 
 --------------------------------------------------------------------------------
 
