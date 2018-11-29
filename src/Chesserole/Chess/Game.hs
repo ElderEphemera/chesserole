@@ -1,12 +1,10 @@
-{-# LANGUAGE DerivingVia #-}
 {-# LANGUAGE RecordWildCards #-}
 
 module Chesserole.Chess.Game where
 
-import Control.Applicative  (ZipList(..))
-import Data.Functor.Compose (Compose(..))
-import Linear               (V2(..))
-import Linear.Affine        (Point(..))
+import qualified Data.Map.Strict as M
+import Linear        (V2(..))
+import Linear.Affine (Point(..))
 
 --------------------------------------------------------------------------------
 
@@ -25,11 +23,7 @@ data Piece = Piece
   , pieceType :: PieceType
   } deriving (Eq, Ord, Show)
 
-newtype Board' a = Board { boardPieces :: [[a]] }
-  deriving (Eq, Ord, Show)
-  deriving (Functor, Applicative) via (Compose ZipList ZipList)
-
-type Board = Board' (Maybe Piece)
+type Board = M.Map Square Piece
 
 --------------------------------------------------------------------------------
 
@@ -70,13 +64,16 @@ data Game = Game
 --------------------------------------------------------------------------------
 
 initialBoard :: Board
-initialBoard = Board $
-  [ buildRank Black backRank, buildRank Black pawnRank
-  , emptyRank, emptyRank, emptyRank, emptyRank
-  , buildRank White pawnRank, buildRank White backRank
+initialBoard = M.unions $
+  [ buildRank 0 Black backRank
+  , buildRank 1 Black pawnRank
+  , buildRank 6 White pawnRank
+  , buildRank 7 White backRank
   ] where
-      emptyRank = replicate 8 Nothing
-      buildRank color = map (Just . Piece color)
+      buildRank squareRank color
+        = M.mapKeys (\squareFile -> Square{..})
+        . fmap (Piece color)
+        . M.fromAscList . zip [0..7]
       pawnRank = replicate 8 Pawn
       backRank = [Rook, Knight, Bishop, Queen, King, Bishop, Knight, Rook]
 
@@ -92,12 +89,11 @@ initialGame = Game
 
 --------------------------------------------------------------------------------
 
-getAtSquare :: Square -> Board' a -> a
-getAtSquare (Square file rank) (Board pieces) = pieces !! rank !! file
+getAtSquare :: Square -> Board -> Maybe Piece
+getAtSquare = M.lookup
 
 setAtSquare :: Square -> Maybe Piece -> Board -> Board
-setAtSquare (Square file rank) maypiece (Board pieces) =
-  Board $ modifyInList rank (setInList file maypiece) pieces
+setAtSquare sq maypiece = M.alter (const maypiece) sq
 
 forceMovePiece :: Square -> Square -> Board -> Board
 forceMovePiece from to board =
@@ -114,14 +110,3 @@ movePiece from to Game{..} = Game
   , gameClock = gameClock -- TODO
   , gameMoves = gameMoves + fromEnum gamePlayer
   }
-
---------------------------------------------------------------------------------
-
--- TODO: Probably shoudn't use @[]@ for 'Board'
-modifyInList :: Int -> (a -> a) -> [a] -> [a]
-modifyInList 0 f (x:xs) = f x : xs
-modifyInList n f (x:xs) = x : modifyInList (n-1) f xs
-modifyInList _ _ [] = error "modifyinlist: invalid index"
-
-setInList :: Int -> a -> [a] -> [a]
-setInList n = modifyInList n . const

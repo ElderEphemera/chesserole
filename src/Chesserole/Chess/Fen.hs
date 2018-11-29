@@ -21,7 +21,10 @@ fen Game{..} = unwords
   ]
 
 fenBoard :: Board -> String
-fenBoard = intercalate "/" . fmap fenRank . boardPieces
+fenBoard board = intercalate "/" . fmap fenRank $
+  [ [ getAtSquare Square{..} board
+    | squareFile <- [0..7] ]
+    | squareRank <- [0..7] ]
 
 fenRank :: [Maybe Piece] -> String
 fenRank = go 0
