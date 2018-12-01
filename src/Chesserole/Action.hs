@@ -33,9 +33,9 @@ handleAction (Click sq) = True <$ do
       unless (sq == sel) . modifyGame $ movePiece sel sq
       putSelSquare Nothing
       renderBoard
-      getGame >>= liftIO . putStrLn . fen
-      getGame >>= engineCommand . ("position fen " <>) . fen
-      engineCommand "go"
+      --getGame >>= liftIO . putStrLn . fen
+      --getGame >>= engineCommand . ("position fen " <>) . fen
+      --engineCommand "go"
 
 eventAction :: EventPayload -> Maybe Action
 eventAction QuitEvent = Just Quit
