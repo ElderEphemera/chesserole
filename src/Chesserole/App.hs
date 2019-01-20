@@ -4,6 +4,7 @@ module Chesserole.App where
 
 import Control.Monad.Reader (MonadIO(..), MonadReader(..), ReaderT(..), asks)
 import Data.IORef           (IORef, readIORef, writeIORef)
+import qualified Data.Map.Strict as M
 import GHC.Exts             (coerce)
 import GHC.IO.Handle        (Handle)
 import System.Process.Typed (Process, getStdin, getStdout)
@@ -11,15 +12,21 @@ import System.Process.Typed (Process, getStdin, getStdout)
 import SDL
 
 import Chesserole.Chess.Game
+import Chesserole.Chess.Moves
 
 --------------------------------------------------------------------------------
+
+data Selection = Selection
+  { selSquare :: Square
+  , selMoves :: M.Map Square Move
+  }
 
 data AppCtx = AppCtx
   { renderer :: Renderer
   , boardTexture :: Texture
   , piecesTexture :: Texture
   , gameRef :: IORef Game
-  , selSquareRef :: IORef (Maybe Square)
+  , selectionRef :: IORef (Maybe Selection)
   , engineProcess :: Process Handle () ()
   }
 
@@ -54,8 +61,8 @@ putGame game = coerce ((`writeIORef` game) . gameRef)
 modifyGame :: (Game -> Game) -> App ()
 modifyGame f = getGame >>= putGame . f
 
-getSelSquare :: App (Maybe Square)
-getSelSquare = coerce (readIORef . selSquareRef)
+getSelection :: App (Maybe Selection)
+getSelection = coerce (readIORef . selectionRef)
 
-putSelSquare :: Maybe Square -> App ()
-putSelSquare maysquare = coerce ((`writeIORef` maysquare) . selSquareRef)
+putSelection :: Maybe Selection -> App ()
+putSelection maysel = coerce ((`writeIORef` maysel) . selectionRef)

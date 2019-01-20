@@ -50,7 +50,7 @@ data CastleSide = QueenSide | KingSide
 data CastleType = CastleType
   { castleColor :: Color
   , castleSide :: CastleSide
-  } deriving (Eq, Show)
+  } deriving (Eq, Ord, Show)
 
 data Game = Game
   { gameBoard :: Board
@@ -99,14 +99,3 @@ forceMovePiece :: Square -> Square -> Board -> Board
 forceMovePiece from to board =
   let maypiece = getAtSquare from board
   in setAtSquare to maypiece $ setAtSquare from Nothing board
-
--- TODO: Special actions: en passant, castling, promotion?
-movePiece :: Square -> Square -> Game -> Game
-movePiece from to Game{..} = Game
-  { gameBoard = forceMovePiece from to gameBoard
-  , gamePlayer = invColor gamePlayer
-  , gameCastling = gameCastling -- TODO
-  , gameEnPassant = gameEnPassant -- TODO
-  , gameClock = gameClock -- TODO
-  , gameMoves = gameMoves + fromEnum gamePlayer
-  }

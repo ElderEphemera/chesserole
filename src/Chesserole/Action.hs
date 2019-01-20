@@ -2,16 +2,16 @@
 
 module Chesserole.Action where
 
-import Control.Monad          (unless)
 import Control.Monad.IO.Class (liftIO)
 import Data.Foldable          (for_)
+import qualified Data.Map.Strict as M
 import System.IO              (hFlush, hPutStrLn)
 
 import SDL
 
 import Chesserole.App
 import Chesserole.Chess.Game
-import Chesserole.Chess.Fen
+import Chesserole.Chess.Moves
 import Chesserole.Render
 
 --------------------------------------------------------------------------------
@@ -22,16 +22,16 @@ data Action = Quit | Click Square
 handleAction :: Action -> App Bool
 handleAction Quit = pure False
 handleAction (Click sq) = True <$ do
-  selSquare <- getSelSquare
-  case selSquare of
+  maysel <- getSelection
+  case maysel of
     Nothing -> do
-      Game{..} <- getGame
+      game@Game{..} <- getGame
       for_ (getAtSquare sq gameBoard) $ \_piece -> do
-        putSelSquare $ Just sq
+        putSelection . Just $ Selection sq (movesFrom game sq)
         renderBoard
-    Just sel -> do
-      unless (sq == sel) . modifyGame $ movePiece sel sq
-      putSelSquare Nothing
+    Just (Selection{..}) -> do
+      for_ (M.lookup sq selMoves) $ modifyGame . movePiece
+      putSelection Nothing
       renderBoard
       --getGame >>= liftIO . putStrLn . fen
       --getGame >>= engineCommand . ("position fen " <>) . fen

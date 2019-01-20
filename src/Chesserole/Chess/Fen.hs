@@ -72,10 +72,11 @@ fenEnPassant (Just s) = anSquare s
 
 --------------------------------------------------------------------------------
 
+-- TODO: Complete anMove
 anMove :: Move -> String
 anMove (Move from to) = anSquare from <> anSquare to
-anMove (Castle QueenSide) = "O-O-O"
-anMove (Castle KingSide) = "O-O"
+--anMove (Castle QueenSide) = "O-O-O"
+--anMove (Castle KingSide) = "O-O"
 
 anSquare :: Square -> String
 anSquare Square{..} = anFile squareFile <> anRank squareRank
@@ -87,13 +88,14 @@ anRank = show
 anFile :: Int -> String
 anFile = pure . toEnum . (fromEnum 'a' +)
 
-parseAnMove :: String -> Maybe Move
-parseAnMove "O-O-O" = Just (Castle QueenSide)
-parseAnMove "O-O" = Just (Castle KingSide)
-parseAnMove [fromFile, fromRank, toFile, toRank] = Move
+-- TODO: Complete parseAnMove
+parseAnMove :: Color -> String -> Maybe Move
+--parseAnMove color "O-O-O" = Just (Castle (CastleType color QueenSide))
+--parseAnMove color "O-O" = Just (Castle (CastleType color KingSide))
+parseAnMove _ [fromFile, fromRank, toFile, toRank] = Move
   <$> parseAnSquare [fromFile, fromRank]
   <*> parseAnSquare [toFile, toRank]
-parseAnMove _ = Nothing
+parseAnMove _ _ = Nothing
 
 -- TODO: hacky
 parseAnSquare :: String -> Maybe Square

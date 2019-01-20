@@ -32,7 +32,7 @@ main = do
   boardTexture <- loadTexture renderer "./assets/board.png"
   piecesTexture <- loadTexture renderer "./assets/pieces.png"
   gameRef <- newIORef initialGame
-  selSquareRef <- newIORef Nothing
+  selectionRef <- newIORef Nothing
   let stockfish = setStdin createPipe {-. setStdout createPipe-} $ shell "stockfish"
   withProcess stockfish $ \engineProcess -> runReaderT (runApp app) AppCtx{..}
 

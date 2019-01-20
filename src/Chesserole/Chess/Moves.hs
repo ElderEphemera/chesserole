@@ -5,6 +5,7 @@ module Chesserole.Chess.Moves where
 
 import Control.Monad (join, mfilter)
 import Data.Foldable (asum)
+import qualified Data.Map.Strict as M
 import Data.Maybe    (isNothing, mapMaybe, maybeToList)
 import Linear        (V2(..))
 
@@ -12,16 +13,26 @@ import Chesserole.Chess.Game
 
 --------------------------------------------------------------------------------
 
-data Move
-  = Move Square Square
-  | Castle CastleSide
+-- TODO: Add special moves: en passant, castling, promotion?
+data Move = Move Square Square
   deriving (Eq, Ord, Show)
+
+movePiece :: Move -> Game -> Game
+movePiece (Move from to) Game{..} = Game
+  { gameBoard = forceMovePiece from to gameBoard
+  , gamePlayer = invColor gamePlayer
+  , gameCastling = gameCastling -- TODO
+  , gameEnPassant = gameEnPassant -- TODO
+  , gameClock = gameClock -- TODO
+  , gameMoves = gameMoves + fromEnum gamePlayer
+  }
 
 --------------------------------------------------------------------------------
 
-validMovesFrom :: Game -> Square -> [Square]
-validMovesFrom game@Game{..} from
-  =  standardMovement gameBoard from
+movesFrom :: Game -> Square -> M.Map Square Move
+movesFrom game@Game{..} from =
+  M.fromList . fmap (\to -> (to, Move from to))
+  $  standardMovement gameBoard from
   <> pawnMovement game from
   <> castlingMovement game from
 

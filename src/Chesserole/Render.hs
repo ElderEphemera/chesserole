@@ -12,27 +12,26 @@ import SDL
 
 import Chesserole.App
 import Chesserole.Chess.Game
-import Chesserole.Chess.Moves
 
 --------------------------------------------------------------------------------
 
 renderBoard :: App ()
 renderBoard = do
   AppCtx{..} <- ask
-  game@Game{..} <- getGame
+  Game{..} <- getGame
   let yellow = V4 206 211  46 255
       green  = V4  36 186  31 100
 
   copy renderer boardTexture Nothing Nothing
 
-  selSquare <- getSelSquare
-  for_ selSquare $ \sel -> do
+  maysel <- getSelection
+  for_ maysel $ \Selection{..} -> do
 
     rendererDrawColor renderer $= yellow
-    fillRect renderer . Just $ squareTile sel
+    fillRect renderer . Just $ squareTile selSquare
 
     rendererDrawColor renderer $= green
-    for_ (validMovesFrom game sel) $ fillRect renderer . Just . squareTile
+    for_ (M.keys selMoves) $ fillRect renderer . Just . squareTile
 
   for_ (M.toList gameBoard) $ \(sq, piece) ->
     copy renderer piecesTexture (Just $ pieceTile piece) (Just $ squareTile sq)
