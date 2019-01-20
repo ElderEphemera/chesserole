@@ -2,7 +2,7 @@
 
 module Chesserole.App where
 
-import Control.Monad.Reader (MonadIO(..), MonadReader(..), ReaderT(..))
+import Control.Monad.Reader (MonadIO(..), MonadReader(..), ReaderT(..), asks)
 import Data.IORef           (IORef, readIORef, writeIORef)
 import GHC.Exts             (coerce)
 import GHC.IO.Handle        (Handle)
@@ -28,16 +28,16 @@ newtype App a = App { runApp :: ReaderT AppCtx IO a }
   deriving (Functor, Applicative, Monad, MonadIO, MonadReader AppCtx)
 
 askRenderer :: App Renderer
-askRenderer = renderer <$> ask
+askRenderer = asks renderer
 
 askPiecesTexture :: App Texture
-askPiecesTexture = piecesTexture <$> ask
+askPiecesTexture = asks piecesTexture
 
 askBoardTexture :: App Texture
-askBoardTexture = boardTexture <$> ask
+askBoardTexture = asks boardTexture
 
 askEngineProcess :: App (Process Handle () ())
-askEngineProcess = engineProcess <$> ask
+askEngineProcess = asks engineProcess
 
 askEngineStdin :: App Handle
 askEngineStdin = getStdin <$> askEngineProcess
