@@ -6,7 +6,6 @@ import Data.Char (toLower)
 import Data.List (intercalate)
 
 import Chesserole.Chess.Game
-import Chesserole.Chess.Moves
 
 --------------------------------------------------------------------------------
 
@@ -72,11 +71,16 @@ fenEnPassant (Just s) = anSquare s
 
 --------------------------------------------------------------------------------
 
+data AnMove
+  = AnMove Square Square
+  | AnCastle CastleSide
+  deriving (Eq, Ord, Show)
+
 -- TODO: Complete anMove
-anMove :: Move -> String
-anMove (Move from to) = anSquare from <> anSquare to
---anMove (Castle QueenSide) = "O-O-O"
---anMove (Castle KingSide) = "O-O"
+anMove :: AnMove -> String
+anMove (AnMove from to) = anSquare from <> anSquare to
+anMove (AnCastle QueenSide) = "O-O-O"
+anMove (AnCastle KingSide) = "O-O"
 
 anSquare :: Square -> String
 anSquare Square{..} = anFile squareFile <> anRank squareRank
@@ -89,13 +93,13 @@ anFile :: Int -> String
 anFile = pure . toEnum . (fromEnum 'a' +)
 
 -- TODO: Complete parseAnMove
-parseAnMove :: Color -> String -> Maybe Move
---parseAnMove color "O-O-O" = Just (Castle (CastleType color QueenSide))
---parseAnMove color "O-O" = Just (Castle (CastleType color KingSide))
-parseAnMove _ [fromFile, fromRank, toFile, toRank] = Move
+parseAnMove :: String -> Maybe AnMove
+parseAnMove "O-O-O" = Just (AnCastle QueenSide)
+parseAnMove "O-O" = Just (AnCastle KingSide)
+parseAnMove [fromFile, fromRank, toFile, toRank] = AnMove
   <$> parseAnSquare [fromFile, fromRank]
   <*> parseAnSquare [toFile, toRank]
-parseAnMove _ _ = Nothing
+parseAnMove _ = Nothing
 
 -- TODO: hacky
 parseAnSquare :: String -> Maybe Square
