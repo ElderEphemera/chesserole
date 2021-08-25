@@ -1,0 +1,83 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.32.0.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: 8cfaed7f55c734538dfa8da14057977ddc9075f656686d9aee9e5ec0d7608cce
+
+name:           chesserole
+version:        0.1.0.0
+category:       Game
+author:         Joshua Price
+maintainer:     joshprice247@gmail.com
+copyright:      Copyright (c) 2018, Joshua Price
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+    assets/board.png
+    assets/pieces.png
+
+library
+  exposed-modules:
+      Chesserole.Action
+      Chesserole.App
+      Chesserole.Chess.Fen
+      Chesserole.Chess.Game
+      Chesserole.Chess.Moves
+      Chesserole.Main
+      Chesserole.Render
+  other-modules:
+      Paths_chesserole
+  hs-source-dirs:
+      src
+  ghc-options: -Wall
+  build-depends:
+      base >=4.7 && <5
+    , containers
+    , linear
+    , mtl
+    , sdl2
+    , sdl2-image
+    , typed-process
+  default-language: Haskell2010
+
+executable chesserole
+  main-is: Main.hs
+  other-modules:
+      Paths_chesserole
+  hs-source-dirs:
+      app
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , chesserole
+    , containers
+    , linear
+    , mtl
+    , sdl2
+    , sdl2-image
+    , typed-process
+  default-language: Haskell2010
+
+test-suite chesserole-test
+  type: exitcode-stdio-1.0
+  main-is: Spec.hs
+  other-modules:
+      Paths_chesserole
+  hs-source-dirs:
+      test
+  ghc-options: -Wall -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      base >=4.7 && <5
+    , chesserole
+    , containers
+    , linear
+    , mtl
+    , sdl2
+    , sdl2-image
+    , typed-process
+  default-language: Haskell2010
