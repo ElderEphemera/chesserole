@@ -1,7 +1,7 @@
 # TODO: Metadata
 name:                chesserole
 version:             0.1.0.0
-#github:              "WhistlePayer/chesserole" # TODO: publish
+#github:              "ElderEphemera/chesserole" # TODO: publish
 license:             BSD3
 author:              "Joshua Price"
 maintainer:          "joshprice247@gmail.com"
@@ -16,7 +16,7 @@ extra-source-files:
 #synopsis:            Short description of your package
 category:            Game
 
-#description:         Please see the README on GitHub at <https://github.com/WhistlePayer/chesserole#readme> # TODO
+#description:         Please see the README on GitHub at <https://github.com/ElderEphemera/chesserole#readme> # TODO
 
 ghc-options:
 - -Wall
