@@ -4,11 +4,15 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 --
--- hash: 8cfaed7f55c734538dfa8da14057977ddc9075f656686d9aee9e5ec0d7608cce
+-- hash: 5cd689bc4682372c22e676ca5475699d4f8aaa30a5adfacdf82a065a7b61590d
 
 name:           chesserole
 version:        0.1.0.0
+synopsis:       TODO
+description:    Please see the README on GitHub at <https://github.com/ElderEphemera/chesserole#readme>
 category:       Game
+homepage:       https://github.com/ElderEphemera/chesserole#readme
+bug-reports:    https://github.com/ElderEphemera/chesserole/issues
 author:         Joshua Price
 maintainer:     joshprice247@gmail.com
 copyright:      Copyright (c) 2018, Joshua Price
@@ -20,6 +24,10 @@ extra-source-files:
     ChangeLog.md
     assets/board.png
     assets/pieces.png
+
+source-repository head
+  type: git
+  location: https://github.com/ElderEphemera/chesserole
 
 library
   exposed-modules:
